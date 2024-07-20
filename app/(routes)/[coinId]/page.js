@@ -10,16 +10,17 @@ import { addToWatchlist } from "../../../redux/slices/watchlistSlice";
 const CoinPage = ({ params }) => {
   const [chartData, setChartData] = useState(null);
   const [coinDetails, setCoinDetails] = useState(null);
+  const [loading, setLoading] = useState(true);
   const chartRef = useRef(null);
   const chartInstanceRef = useRef(null);
   const dispatch = useDispatch();
   const watchlist = useSelector((state) => state.watchlist);
 
- 
-
   useEffect(() => {
     const fetchCoinData = async () => {
       try {
+        setLoading(true); // Start loading
+
         const chartResponse = await fetch(
           `https://api.coingecko.com/api/v3/coins/${params.coinId}/market_chart/range?vs_currency=usd&from=1721208694&to=1721295094`,
           {
@@ -55,9 +56,10 @@ const CoinPage = ({ params }) => {
         setChartData(formattedChartData);
         setCoinDetails(detailsDataJson);
 
-        console.log(detailsDataJson);
+        setLoading(false); // Stop loading
       } catch (error) {
         console.error("Fetch error:", error);
+        setLoading(false); // Stop loading on error
       }
     };
 
@@ -151,7 +153,6 @@ const CoinPage = ({ params }) => {
     ));
   };
 
-  // Function to calculate percentage for progress bar width
   const calculatePercentage = (value, maxValue) => {
     if (!maxValue || maxValue <= 0) return 0;
     return (value / maxValue) * 100;
@@ -189,76 +190,81 @@ const CoinPage = ({ params }) => {
     if (coinDetails) {
       dispatch(addToWatchlist(coinDetails));
     }
-    
   };
 
   return (
     <div>
       <Navbar />
       <div className="bg-gray-50 min-h-screen">
-        <div className="container mx-auto mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6 fade-in">
-          <div className="lg:col-span-2 bg-white p-6 rounded-lg shadow-lg">
-            <div className="flex items-center justify-between mb-4">
-              {coinDetails && (
-                <div>
-                  <h1 className="text-2xl font-bold">
-                    {coinDetails.name} ({coinDetails.symbol.toUpperCase()})
-                  </h1>
-                  <p className="text-3xl font-semibold text-green-600">
-                    $
-                    {coinDetails.market_data?.current_price?.usd?.toLocaleString() ??
-                      "N/A"}{" "}
-                    <span className="text-green-500 text-lg">
-                      (
-                      {coinDetails.market_data?.price_change_percentage_24h?.toFixed(
-                        2
-                      ) ?? "N/A"}
-                      %)
-                    </span>
-                  </p>
+        {loading ? (
+          <div className="flex justify-center items-center h-screen">
+            <div className="loader"> </div>
+          </div>
+        ) : (
+          <div className="container mx-auto mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6 fade-in">
+            <div className="lg:col-span-2 bg-white p-6 rounded-lg shadow-lg">
+              <div className="flex items-center justify-between mb-4">
+                {coinDetails && (
+                  <div>
+                    <h1 className="text-2xl font-bold">
+                      {coinDetails.name} ({coinDetails.symbol.toUpperCase()})
+                    </h1>
+                    <p className="text-3xl font-semibold text-green-600">
+                      $
+                      {coinDetails.market_data?.current_price?.usd?.toLocaleString() ??
+                        "N/A"}{" "}
+                      <span className="text-green-500 text-lg">
+                        (
+                        {coinDetails.market_data?.price_change_percentage_24h?.toFixed(
+                          2
+                        ) ?? "N/A"}
+                        %)
+                      </span>
+                    </p>
+                  </div>
+                )}
+                <div className="text-right">
+                  {/* <button
+                    onClick={handleAddToWatchlist}
+                    className="bg-green-500 text-white p-2 rounded-full"
+                  >
+                    +
+                  </button> */}
                 </div>
-              )}
-              <div className="text-right">
-                {/* <button
-                  onClick={handleAddToWatchlist}
-                  className="bg-green-500 text-white p-2 rounded-full"
-                >
-                  +
-                </button> */}
               </div>
+              <canvas ref={chartRef} className="line-chart" />
             </div>
-            <canvas ref={chartRef} className="line-chart" />
-          </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-lg space-y-6">
-            <div>
-              <h2 className="text-xl font-bold mb-4 text-green-600">
-                Watchlist
-              </h2>
-              <div id="watchlist" className="space-y-2">
-                {createList(watchlist)}
+            <div className="bg-white p-6 rounded-lg shadow-lg space-y-6">
+              <div>
+                <h2 className="text-xl font-bold mb-4 text-green-600">
+                  Watchlist
+                </h2>
+                <div id="watchlist" className="space-y-2">
+                  {createList(watchlist)}
+                </div>
+                <div className="text-right">
+                  <a href="#" className="text-blue-600">
+                    View more coins
+                  </a>
+                </div>
               </div>
-              <div className="text-right">
-                <a href="#" className="text-blue-600">
-                  View more coins
-                </a>
-              </div>
-            </div>
-            <div>
-              <h2 className="text-xl font-bold mb-4 text-green-600">
-                Recently Viewed
-              </h2>
-              <div id="recentlyViewed" className="space-y-2">
-                {createList(watchlist)}
-              </div>
-              <div className="text-right">
-                <a href="#" className="text-blue-600">
-                  View more coins
-                </a>
+              <div>
+                <h2 className="text-xl font-bold mb-4 text-green-600">
+                  Recently Viewed
+                </h2>
+                <div id="recentlyViewed" className="space-y-2">
+                  {createList(watchlist)}
+                </div>
+                <div className="text-right">
+                  <a href="#" className="text-blue-600">
+                    View more coins
+                  </a>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
 
         {coinDetails && (
           <>

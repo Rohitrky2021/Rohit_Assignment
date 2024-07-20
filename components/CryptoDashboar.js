@@ -3,11 +3,9 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Image from "next/image";
 import { fetchCoins } from "../redux/slices/coinSlice";
-import {
-  addToWatchlist,
-  removeFromWatchlist,
-} from "../redux/slices/watchlistSlice";
+import { addToWatchlist, removeFromWatchlist } from "../redux/slices/watchlistSlice";
 import Link from "next/link";
+import "./../app/(routes)/[coinId]/style.css"
 
 const CryptoDashboard = () => {
   const dispatch = useDispatch();
@@ -21,9 +19,16 @@ const CryptoDashboard = () => {
   const [perPage, setPerPage] = useState(8);
   const [totalPages, setTotalPages] = useState(5);
   const [filter, setFilter] = useState("all");
+  const [loading, setLoading] = useState(true); // New loading state
 
   useEffect(() => {
-    dispatch(fetchCoins(currency, sortBy, coinSearch, page, perPage));
+    const fetchData = async () => {
+      setLoading(true); // Set loading to true before fetching data
+      await dispatch(fetchCoins(currency, sortBy, coinSearch, page, perPage));
+      setLoading(false); // Set loading to false after fetching data
+    };
+
+    fetchData();
   }, [currency, sortBy, coinSearch, page, perPage, dispatch]);
 
   useEffect(() => {
@@ -99,10 +104,9 @@ const CryptoDashboard = () => {
   };
 
   const createTableRows = (items) => {
-    console.log(items);
+    // console.log(items);
     return items.map((item) => (
       <tr key={item.id} className="border-b">
-        {/* <Link href={`/${/item.id}`}> */}
         <td className="py-2 px-4">
           <Link href={`/${item.id}`}>
             <div className="flex items-center">
@@ -117,7 +121,6 @@ const CryptoDashboard = () => {
             </div>
           </Link>
         </td>
-        {/* </Link> */}
         <td className="py-2 px-4">{item.current_price}</td>
         <td className="py-2 px-4">{item.market_cap}</td>
         <td className="py-2 px-4">{item.high_24h}</td>
@@ -200,102 +203,109 @@ const CryptoDashboard = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      <div className="container mx-auto mt-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
-        <div className="lg:col-span-3 bg-white p-6 rounded-lg shadow-lg">
-          <div className="flex items-center justify-between mb-4">
-            <button
-              onClick={() => handleFilterChange("all")}
-              className={`px-4 py-2 rounded-lg ${
-                filter === "all"
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 text-gray-700"
-              }`}
-            >
-              All Coins
-            </button>
-
-            <button
-              onClick={() => handleFilterChange("gainers")}
-              className={`px-4 py-2 rounded-lg ${
-                filter === "gainers"
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 text-gray-700"
-              }`}
-            >
-              Gainers
-            </button>
-            <button
-              onClick={() => handleFilterChange("losers")}
-              className={`px-4 py-2 rounded-lg ${
-                filter === "losers"
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 text-gray-700"
-              }`}
-            >
-              Losers
-            </button>
-            <button
-              onClick={() => handleFilterChange("recently_sold")}
-              className={`px-4 py-2 rounded-lg ${
-                filter === "recently_sold"
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 text-gray-700"
-              }`}
-            >
-              Recently Sold
-            </button>
+      {loading ? (
+        <div className="flex justify-center items-center h-screen">
+          <div className="loader"> </div>
+        </div>
+      ) : (
+        <div className="container mx-auto mt-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
+          <div className="lg:col-span-3 bg-white p-6 rounded-lg shadow-lg">
+            <div className="flex items-center justify-between mb-4">
+              <button
+                onClick={() => handleFilterChange("all")}
+                className={`px-4 py-2 rounded-lg ${
+                  filter === "all"
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200 text-gray-700"
+                }`}
+              >
+                All Coins
+              </button>
+              <button
+                onClick={() => handleFilterChange("gainers")}
+                className={`px-4 py-2 rounded-lg ${
+                  filter === "gainers"
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200 text-gray-700"
+                }`}
+              >
+                Gainers
+              </button>
+              <button
+                onClick={() => handleFilterChange("losers")}
+                className={`px-4 py-2 rounded-lg ${
+                  filter === "losers"
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200 text-gray-700"
+                }`}
+              >
+                Losers
+              </button>
+              <button
+                onClick={() => handleFilterChange("recently_sold")}
+                className={`px-4 py-2 rounded-lg ${
+                  filter === "recently_sold"
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200 text-gray-700"
+                }`}
+              >
+                Recently Sold
+              </button>
+            </div>
+            <table className="min-w-full bg-white">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="py-2 px-4 text-left">Name</th>
+                  <th className="py-2 px-4 text-left">Price</th>
+                  <th className="py-2 px-4 text-left">Market Cap</th>
+                  <th className="py-2 px-4 text-left">High (24h)</th>
+                  <th className="py-2 px-4 text-left">Low (24h)</th>
+                  <th className="py-2 px-4 text-left">Change (24h)</th>
+                  <th className="py-2 px-4 text-left">
+                    Market Cap Change (24h)
+                  </th>
+                  <th className="py-2 px-4 text-left">Actions</th>
+                </tr>
+              </thead>
+              <tbody>{createTableRows(filterCoins())}</tbody>
+            </table>
+            <div className="flex justify-between mt-4">
+              <button
+                onClick={() => handlePageChange(page - 1)}
+                disabled={page === 1}
+                className={`px-4 py-2 rounded-lg ${
+                  page === 1 ? "bg-gray-300" : "bg-blue-500 text-white"
+                }`}
+              >
+                Previous
+              </button>
+              <div className="flex space-x-2">{renderPagination()}</div>
+              <button
+                onClick={() => handlePageChange(page + 1)}
+                disabled={page === totalPages}
+                className={`px-4 py-2 rounded-lg ${
+                  page === totalPages ? "bg-gray-300" : "bg-blue-500 text-white"
+                }`}
+              >
+                Next
+              </button>
+            </div>
           </div>
-          <table className="min-w-full bg-white">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="py-2 px-4 text-left">Name</th>
-                <th className="py-2 px-4 text-left">Price</th>
-                <th className="py-2 px-4 text-left">Market Cap</th>
-                <th className="py-2 px-4 text-left">High (24h)</th>
-                <th className="py-2 px-4 text-left">Low (24h)</th>
-                <th className="py-2 px-4 text-left">Change (24h)</th>
-                <th className="py-2 px-4 text-left">Market Cap Change (24h)</th>
-                <th className="py-2 px-4 text-left">Actions</th>
-              </tr>
-            </thead>
-            <tbody>{createTableRows(filterCoins())}</tbody>
-          </table>
-          <div className="flex justify-between mt-4">
-            <button
-              onClick={() => handlePageChange(page - 1)}
-              disabled={page === 1}
-              className={`px-4 py-2 rounded-lg ${
-                page === 1 ? "bg-gray-300" : "bg-blue-500 text-white"
-              }`}
-            >
-              Previous
-            </button>
-            <div className="flex space-x-2">{renderPagination()}</div>
-            <button
-              onClick={() => handlePageChange(page + 1)}
-              disabled={page === totalPages}
-              className={`px-4 py-2 rounded-lg ${
-                page === totalPages ? "bg-gray-300" : "bg-blue-500 text-white"
-              }`}
-            >
-              Next
-            </button>
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h2 className="text-xl font-bold mb-4 text-green-600">Watchlist</h2>
+            <table className="min-w-full bg-white">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="py-2 px-4 text-left">Name</th>
+                  <th className="py-2 px-4 text-left">Price</th>
+                  <th className="py-2 px-4 text-left">Actions</th>
+                </tr>
+              </thead>
+              <tbody>{createWatchlistRows(watchlist)}</tbody>
+            </table>
           </div>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow-lg">
-          <h2 className="text-xl font-bold mb-4 text-green-600">Watchlist</h2>
-          <table className="min-w-full bg-white">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="py-2 px-4 text-left">Name</th>
-                <th className="py-2 px-4 text-left">Price</th>
-                <th className="py-2 px-4 text-left">Actions</th>
-              </tr>
-            </thead>
-            <tbody>{createWatchlistRows(watchlist)}</tbody>
-          </table>
-        </div>
-      </div>
+      )}
     </div>
   );
 };

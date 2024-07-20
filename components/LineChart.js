@@ -28,7 +28,7 @@ const LineChart = ({ coins }) => {
 
         const data = await response.json();
 
-        console.log(data);
+        // console.log(data);
 
         setCoins(data.coins || []);
       } catch (error) {
@@ -159,7 +159,7 @@ const LineChart = ({ coins }) => {
   const recentlyViewed = [...watchlist];
 
   const createList = (items) => {
-    console.log(items);
+    // console.log(items);
     return items.map((item) => (
       <div
         key={item.name}
