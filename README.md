@@ -57,22 +57,22 @@ Follow these steps to set up the Cryptonite application on your local machine:
 - **Public Companies Holdings:** Display information about public companies holding Bitcoin and Ethereum.
 
 #### Homepage Images
-![Homepage 1](https://drive.google.com/file/d/1g5QfQjESVg5u2vw9wwEQY6JsCdgD3htR/view?usp=drive_link)
-![Homepage 2](https://drive.google.com/file/d/183-Lbc8lGBlC9G5GtVaB6RJ7I9Igl80V/view?usp=sharing)
+![Homepage 1](assets/Home.png )
+![Homepage 2](assets/Home_se.png)
 
 ### 2. Explore Page
 - **Paginated Coin List/Grid:** Display a paginated list or grid of cryptocurrencies, with each page containing 20 items and navigation to load more.
 - **Navigation:** Clicking on a card routes the user to the product page of the selected cryptocurrency.
 
 #### Explore Page Image
-![Explorer](https://drive.google.com/file/d/11jIEu5Mg8i-0TXreAaofScNribEvqjvt/view?usp=sharing)
+![Explorer]( assets/Explorer.png)
 
 ### 3. Product Page
 - **Basic Information:** Display basic information about the selected cryptocurrency.
 - **Price Graph:** Show a candle or line graph of the cryptocurrency’s price over time.
 
 #### Product Page Image
-![Coin Details](https://drive.google.com/file/d/1Fg40S2kzlSqJuiT9t9Zk-mTE81q_i83Q/view?usp=sharing)
+![Coin Details](assets/Coin_Details.png)
 
 
 ### 4. Common Header
