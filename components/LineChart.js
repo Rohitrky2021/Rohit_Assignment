@@ -159,33 +159,49 @@ const LineChart = ({ coins }) => {
   const recentlyViewed = [...watchlist];
 
   const createList = (items) => {
-    // console.log(items);
-    return items.map((item) => (
-      <div
-        key={item.name}
-        className="flex justify-between p-2 bg-gray-100 rounded-lg shadow-sm"
-      >
-        <div className="flex items-center">
-          <Image
-            src={item.image}
-            alt={item.name}
-            className="w-6 h-6 mr-2"
-            width={100}
-            height={100}
-          />
-          {item.name}
-        </div>
-        <span className="text-gray-600">{item.current_price}</span>
-        <span
-          className={`text-${
-            item.ath_change_percentage > 0 ? "green" : "red"
-          }-600`}
-        >
-          {item.ath}
-        </span>
-        <span className="text-gray-600">{item.marketCap}</span>
-      </div>
-    ));
+    return (
+      <table className="min-w-full bg-white border border-gray-200 rounded-md shadow-md">
+        <thead>
+          <tr className="border-b border-gray-300">
+            <th className="py-2 px-4 text-left text-gray-700">Name</th>
+            {/* <th className="py-2 px-4 text-left text-gray-700">Symbol</th> */}
+            <th className="py-2 px-4 text-left text-gray-700">Price (USD)</th>
+            <th className="py-2 px-4 text-left text-gray-700">24h Change (%)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {items.map((item) => (
+            <tr key={item.name} className="border-b border-gray-200">
+              <td className="py-2 px-4 flex items-center">
+                <Image
+                  src={item.image}
+                  alt={item.name}
+                  className="w-6 h-6 mr-2"
+                  width={100}
+                  height={100}
+                />
+                {item.name}
+              </td>
+              {/* <td className="py-2 px-4">{item.symbol}</td> */}
+              <td className="py-2 px-4">
+                $
+                {item.current_price.toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </td>
+              <td
+                className={`py-2 px-4 text-${
+                  item.ath_change_percentage > 0 ? "green" : "red"
+                }-600`}
+              >
+                {item.ath_change_percentage.toFixed(2)}%
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    );
   };
 
   return (
@@ -206,7 +222,7 @@ const LineChart = ({ coins }) => {
               Recently Viewed
             </h2>
             <div id="recentlyViewed" className="text-black space-y-2">
-              {createList(watchlist)}
+              {createList(recentlyViewed)}
             </div>
           </div>
         </div>
