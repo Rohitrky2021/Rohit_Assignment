@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useSelector, useDispatch } from "react-redux";
 import Navbar from "../../../components/navbar";
 import { addToWatchlist } from "../../../redux/slices/watchlistSlice";
+import Link from "next/link";
 
 const CoinPage = ({ params }) => {
   const [chartData, setChartData] = useState(null);
@@ -152,7 +153,7 @@ const CoinPage = ({ params }) => {
       </div>
     ));
   };
-
+let x="explorer"
   const calculatePercentage = (value, maxValue) => {
     if (!maxValue || maxValue <= 0) return 0;
     return (value / maxValue) * 100;
@@ -244,12 +245,11 @@ const CoinPage = ({ params }) => {
                   {createList(watchlist)}
                 </div>
                 <div className="text-right">
-                  <a href="#" className="text-blue-600">
-                    View more coins
-                  </a>
+                 
+                  <Link href={`/${x}`} className="text-blue-600"> View more coinss</Link>
                 </div>
               </div>
-              <div>
+              <div> 
                 <h2 className="text-xl font-bold mb-4 text-green-600">
                   Recently Viewed
                 </h2>
@@ -257,9 +257,7 @@ const CoinPage = ({ params }) => {
                   {createList(watchlist)}
                 </div>
                 <div className="text-right">
-                  <a href="#" className="text-blue-600">
-                    View more coins
-                  </a>
+                <Link href={`/${x}`} className="text-blue-600"> View more coinss</Link>
                 </div>
               </div>
             </div>
